@@ -1,0 +1,44 @@
+{
+  "name": "opencode-workspace-env",
+  "version": "0.1.0",
+  "description": "OpenCode plugin for per-workspace env injection via shell.env hook",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "test": "bun test",
+    "build": "tsc",
+    "typecheck": "tsgo --noEmit",
+    "lint": "oxlint",
+    "check": "bun test && bun run typecheck",
+    "format": "biome format --write .",
+    "prepublishOnly": "bun run build"
+  },
+  "keywords": [
+    "opencode",
+    "plugin",
+    "workspace",
+    "environment",
+    "direnv",
+    "nix"
+  ],
+  "author": "OpenCode Team",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "repository": "github:yimsk/opencode-workspace-env",
+  "devDependencies": {
+    "@nkzw/oxlint-config": "^1.0.1",
+    "@types/bun": "latest",
+    "@types/node": "^24.5.2",
+    "@typescript/native-preview": "^7.0.0-dev.20260310.1",
+    "oxlint": "^1.56.0",
+    "typescript": "^5.4.0"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": "*"
+  }
+}

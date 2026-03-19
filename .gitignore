@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.direnv/
+.opencode/
+.sisyphus/
+AGENTS.md
+EOF
+LEARNINGS
+*.db
