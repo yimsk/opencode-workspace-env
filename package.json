@@ -1,6 +1,6 @@
 {
   "name": "opencode-workspace-env",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "OpenCode plugin for per-workspace env injection via shell.env hook",
   "type": "module",
   "main": "dist/index.js",
