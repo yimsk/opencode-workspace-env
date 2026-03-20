@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
@@ -21,7 +22,7 @@ jobs:
         uses: changesets/action@v1
         with:
           version: bunx changeset version && node scripts/sync-version.mjs
-          publish: npm publish
+          publish: npm publish --provenance --access public
           title: "chore: release"
           commit: "chore: release"
         env:
