@@ -31,6 +31,8 @@
   "license": "MIT",
   "repository": "github:yimsk/opencode-workspace-env",
   "devDependencies": {
+    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/cli": "^2.30.0",
     "@nkzw/oxlint-config": "^1.0.1",
     "@types/bun": "latest",
     "@types/node": "^24.5.2",

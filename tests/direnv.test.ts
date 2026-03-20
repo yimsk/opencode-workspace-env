@@ -248,4 +248,27 @@ describe("exportEnv", () => {
       TEST_VAR: "keep",
     });
   });
+
+  it("should filter out system identity variables", async () => {
+    mockDirenv(() => ({
+      stdout: JSON.stringify({
+        HOME: "/homeless-shelter",
+        HOSTNAME: "build-host",
+        LOGNAME: "nixbld",
+        SHELL: "/nix/store/.../bash",
+        TEST_VAR: "keep",
+        USER: "nixbld",
+      }),
+      success: true,
+    }));
+
+    const result = await exportEnv(envrcPath);
+
+    expect(result.ok).toBeTrue();
+    if (!result.ok) {
+      throw new Error("expected ok");
+    }
+
+    expect(result.env).toEqual({ TEST_VAR: "keep" });
+  });
 });

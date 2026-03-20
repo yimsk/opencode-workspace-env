@@ -33,7 +33,6 @@ describe("exportNixEnv", () => {
       stdout: JSON.stringify({
         variables: {
           CUSTOM_VAR: { type: "exported", value: "custom_value" },
-          HOME: { type: "exported", value: "/home/user" },
           PATH: { type: "exported", value: "/nix/store/...:..." },
         },
       }),
@@ -45,7 +44,6 @@ describe("exportNixEnv", () => {
     expect(result).toEqual({
       env: {
         CUSTOM_VAR: "custom_value",
-        HOME: "/home/user",
         PATH: "/nix/store/...:...",
       },
       ok: true,
@@ -236,5 +234,30 @@ describe("exportNixEnv", () => {
     expect(result.env.NIX_PROFILES).toBe("/nix/var/nix/profiles");
     // NIX_BUILD_* should be filtered
     expect(result.env.NIX_BUILD_CORES).toBeUndefined();
+  });
+
+  it("should filter out system identity variables", async () => {
+    mockNix(() => ({
+      stdout: JSON.stringify({
+        variables: {
+          CUSTOM_VAR: { type: "exported", value: "keep" },
+          HOME: { type: "exported", value: "/homeless-shelter" },
+          HOSTNAME: { type: "exported", value: "build-host" },
+          LOGNAME: { type: "exported", value: "nixbld" },
+          SHELL: { type: "exported", value: "/nix/store/.../bash" },
+          USER: { type: "exported", value: "nixbld" },
+        },
+      }),
+      success: true,
+    }));
+
+    const result = await exportNixEnv(flakeNixPath);
+
+    expect(result.ok).toBeTrue();
+    if (!result.ok) {
+      throw new Error("expected ok");
+    }
+
+    expect(result.env).toEqual({ CUSTOM_VAR: "keep" });
   });
 });
