@@ -1,10 +1,11 @@
 import { describe, expect, it } from "bun:test";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import type { Hooks, PluginInput } from "@opencode-ai/plugin";
 
 const repoRoot = join(import.meta.dir, "..");
+const pkg = JSON.parse(readFileSync(join(repoRoot, "package.json"), "utf-8"));
 const scratchRoot = join(repoRoot, ".sisyphus");
 mkdirSync(scratchRoot, { recursive: true });
 const defaultModulePath = join(repoRoot, "dist/index.js");
@@ -38,9 +39,9 @@ function createCompliantPluginFixture(): { cleanup: () => void; modulePath: stri
   writeFileSync(
     modulePath,
     [
-      'export const name = "opencode-workspace-env";',
-      'export const version = "0.1.0";',
-      'export const description = "OpenCode plugin for per-workspace env injection via shell.env hook";',
+      `export const name = "${pkg.name}";`,
+      `export const version = "${pkg.version}";`,
+      `export const description = "${pkg.description}";`,
       "",
       "export default async function plugin(_input) {",
       "  return {",
@@ -54,9 +55,9 @@ function createCompliantPluginFixture(): { cleanup: () => void; modulePath: stri
     typesPath,
     [
       'import type { Hooks, PluginInput } from "@opencode-ai/plugin";',
-      'export declare const name = "opencode-workspace-env";',
-      'export declare const version = "0.1.0";',
-      'export declare const description = "OpenCode plugin for per-workspace env injection via shell.env hook";',
+      `export declare const name = "${pkg.name}";`,
+      `export declare const version = "${pkg.version}";`,
+      `export declare const description = "${pkg.description}";`,
       "export default function plugin(_input: PluginInput): Promise<Hooks>;",
     ].join("\n")
   );
@@ -145,11 +146,9 @@ describe("opencode-workspace-env entrypoint contract", () => {
     await withResolvedPluginTarget(async ({ modulePath }) => {
       const mod = await loadPluginModule(modulePath);
 
-      expect(mod.name).toBe("opencode-workspace-env");
-      expect(mod.version).toBe("0.1.0");
-      expect(mod.description).toBe(
-        "OpenCode plugin for per-workspace env injection via shell.env hook"
-      );
+      expect(mod.name).toBe(pkg.name);
+      expect(mod.version).toBe(pkg.version);
+      expect(mod.description).toBe(pkg.description);
     });
   });
 
