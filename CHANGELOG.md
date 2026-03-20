@@ -1,5 +1,11 @@
 # opencode-workspace-env
 
+## 0.1.2
+
+### Patch Changes
+
+- [`6b6960b`](https://github.com/yimsk/opencode-workspace-env/commit/6b6960b7454812af51b6bdba9833e7d71111ed36) Thanks [@yimsk](https://github.com/yimsk)! - Merge nix PATH with existing PATH instead of replacing it (deduplicated, nix paths first)
+
 ## 0.1.1
 
 ### Patch Changes
