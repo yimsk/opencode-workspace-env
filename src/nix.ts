@@ -36,6 +36,27 @@ function parseNixOutput(raw: string): NixPrintDevEnvOutput | undefined {
   return parsed;
 }
 
+function mergePath(nixPath: string): string {
+  const current = process.env.PATH ?? "";
+  const seen = new Set<string>();
+  const merged: string[] = [];
+
+  for (const p of nixPath.split(":")) {
+    if (p && !seen.has(p)) {
+      seen.add(p);
+      merged.push(p);
+    }
+  }
+  for (const p of current.split(":")) {
+    if (p && !seen.has(p)) {
+      seen.add(p);
+      merged.push(p);
+    }
+  }
+
+  return merged.join(":");
+}
+
 function collectNixEnv(output: NixPrintDevEnvOutput): Record<string, string> {
   const env: Record<string, string> = {};
   const variables = output.variables;
@@ -54,7 +75,7 @@ function collectNixEnv(output: NixPrintDevEnvOutput): Record<string, string> {
     if (typeof variable.value !== "string") {
       continue;
     }
-    env[key] = variable.value;
+    env[key] = key === "PATH" ? mergePath(variable.value) : variable.value;
   }
 
   return env;

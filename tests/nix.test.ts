@@ -41,13 +41,13 @@ describe("exportNixEnv", () => {
 
     const result = await exportNixEnv(flakeNixPath);
 
-    expect(result).toEqual({
-      env: {
-        CUSTOM_VAR: "custom_value",
-        PATH: "/nix/store/...:...",
-      },
-      ok: true,
-    });
+    expect(result.ok).toBeTrue();
+    if (!result.ok) {
+      throw new Error("expected ok");
+    }
+    expect(result.env.CUSTOM_VAR).toBe("custom_value");
+    // PATH should be merged with process.env.PATH
+    expect(result.env.PATH).toContain("/nix/store/...");
   });
 
   it("should filter out nix build-system internal variables", async () => {
@@ -259,5 +259,32 @@ describe("exportNixEnv", () => {
     }
 
     expect(result.env).toEqual({ CUSTOM_VAR: "keep" });
+  });
+
+  it("should merge nix PATH with process.env.PATH and deduplicate", async () => {
+    const originalPath = process.env.PATH;
+    process.env.PATH = "/usr/local/bin:/usr/bin";
+    try {
+      mockNix(() => ({
+        stdout: JSON.stringify({
+          variables: {
+            PATH: { type: "exported", value: "/nix/store/bin:/usr/bin:/nix/store/other" },
+          },
+        }),
+        success: true,
+      }));
+
+      const result = await exportNixEnv(flakeNixPath);
+
+      expect(result.ok).toBeTrue();
+      if (!result.ok) {
+        throw new Error("expected ok");
+      }
+
+      // nix paths first, then original paths, no duplicates
+      expect(result.env.PATH).toBe("/nix/store/bin:/usr/bin:/nix/store/other:/usr/local/bin");
+    } finally {
+      process.env.PATH = originalPath;
+    }
   });
 });

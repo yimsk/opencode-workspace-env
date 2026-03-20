@@ -474,10 +474,9 @@ describe("flake.nix fallback integration", () => {
     const output = { env: {} };
     await hook({ cwd: repo.cwd }, output);
 
-    expect(output.env).toEqual({
-      CUSTOM: "from-nix",
-      PATH: "/nix/store/...:...",
-    });
+    expect(output.env.CUSTOM).toBe("from-nix");
+    // PATH is merged with process.env.PATH
+    expect(output.env.PATH).toContain("/nix/store/...");
     expect(mock.nixCalls).toBe(1);
     expect(mock.direnvCalls).toBe(0);
 
