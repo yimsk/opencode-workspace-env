@@ -20,7 +20,7 @@ jobs:
       - name: Create release PR or publish
         uses: changesets/action@v1
         with:
-          version: bunx changeset version && node scripts/sync-version.mjs
+          version: bash -c 'bunx changeset version && node scripts/sync-version.mjs'
           publish: bunx changeset publish
           title: "chore: release"
           commit: "chore: release"
