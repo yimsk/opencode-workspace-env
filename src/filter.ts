@@ -3,6 +3,11 @@ const EXCLUDED_PREFIXES = ["DIRENV_", "NIX_BUILD_", "__"];
 
 /** Known nix build-system variables that should not leak into shell env */
 const EXCLUDED_VARS = new Set([
+  "HOME",
+  "USER",
+  "LOGNAME",
+  "SHELL",
+  "HOSTNAME",
   "name",
   "system",
   "builder",
