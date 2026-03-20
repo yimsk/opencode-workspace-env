@@ -6,7 +6,7 @@ import { resolveEnvSource } from "./resolve.js";
 import type { EnvExportResult } from "./types.js";
 
 export const name = "opencode-workspace-env";
-export const version = "0.1.0";
+export const version = "0.1.1";
 export const description = "OpenCode plugin for per-workspace env injection via shell.env hook";
 
 const cache = new EnvCache();
