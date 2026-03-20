@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import type { Hooks, PluginInput } from "@opencode-ai/plugin";
@@ -146,7 +146,8 @@ describe("opencode-workspace-env entrypoint contract", () => {
       const mod = await loadPluginModule(modulePath);
 
       expect(mod.name).toBe("opencode-workspace-env");
-      expect(mod.version).toBe("0.1.0");
+      const pkg = JSON.parse(readFileSync(join(repoRoot, "package.json"), "utf8"));
+      expect(mod.version).toBe(pkg.version);
       expect(mod.description).toBe(
         "OpenCode plugin for per-workspace env injection via shell.env hook"
       );
